@@ -1,0 +1,29 @@
+This is a storage backend for django that uses S3.  It does a number of things that is an improvement over other available backends.
+
+It is fault tolerant.  If your image doesn't make it to S3, it can still be served from a local server.  It also attempts to do the right thing when you are trying to grab file attributes (size, width, height)... in that it will try locally first, then make the calls to S3.  Though don't access those attributes from your application if you can anyhow, it's not a good idea.
+
+If you have memcached (or another caching backend) setup it will store the urls to the files there.
+
+If you have celery installed it will utilize the celery queue to upload the files asyncronously.
+
+Though adding celery and memcached improve the experience, the only real requirement is boto.
+
+Available/required options are as follows:
+
+AWS_ACCESS_KEY = getattr(settings, 'AWS_ACCESS_KEY')
+AWS_SECRET_KEY = getattr(settings, 'AWS_SECRET_KEY')
+S3_STORAGE_BUCKET = getattr(settings, 'S3_STORAGE_BUCKET')
+S3_CNAME = getattr(settings, 'S3_CNAME', False)
+
+BACKUP_MEDIA_URL = getattr(settings, 'BACKUP_MEDIA_URL')
+MEDIA_URL = getattr(settings, 'MEDIA_URL')
+
+MEDIA_ROOT = getattr(settings, 'MEDIA_ROOT')
+
+S3_ACL = getattr(settings, 'S3_ACL', 'public-read')
+S3_HEADERS = getattr(settings, 'S3_HEADERS', {})
+
+S3_FAR_FUTURE = getattr(settings, 'S3_FAR_FUTURE', True)
+S3_HASHED_NAME = getattr(settings, 'S3_HASHED_NAME', True)
+
+Hashed name sets the files name to a md5 hash of itself.  Far future sets the expiry header to 10 years in the future.
